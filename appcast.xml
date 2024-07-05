@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Smeller</title>
+        <item>
+            <title>3.4.3</title>
+            <pubDate>Fri, 05 Jul 2024 14:54:48 +0200</pubDate>
+            <sparkle:version>2</sparkle:version>
+            <sparkle:shortVersionString>3.4.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.4.3.dmg" length="13286207" type="application/octet-stream" sparkle:edSignature="S1ZnUNMUPe2SlbXTNJctb086HpaKO6IBSEo/WXtMq4qzvE3xHmjWo/v/k060DJPBO4lzJI3WWk0koDF6PT8CAg=="/>
+        </item>
+    </channel>
+</rss>
