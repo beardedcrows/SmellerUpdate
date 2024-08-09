@@ -8,8 +8,10 @@
             <sparkle:version>6</sparkle:version>
  <description><![CDATA[
             <h2>New Features</h2>
-            - New Serial number check
-	    - Improvements to MacCheck data collection
+	    <ul>
+            <li>New Serial number check</li>
+	    <li>Improvements to MacCheck data collection</li>
+	    </ul>
             ]]>
             </description>
             <sparkle:shortVersionString>3.4.7</sparkle:shortVersionString>
