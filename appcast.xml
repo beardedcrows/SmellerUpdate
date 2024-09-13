@@ -3,20 +3,20 @@
     <channel>
         <title>Smeller</title>
         <item>
-            <title>3.4.7</title>
-            <pubDate>Fri, 09 Aug 2024 10:23:33 +0200</pubDate>
-            <sparkle:version>6</sparkle:version>
+            <title>3.4.8</title>
+            <pubDate>Fri, 13 Sep 2024 11:46:29 +0200</pubDate>
+            <sparkle:version>7</sparkle:version>
  <description><![CDATA[
             <h2>New Features</h2>
 	    <ul>
-            <li>New Serial number check</li>
-	    <li>Improvements to MacCheck data collection</li>
+            <li>New Admin Features</li>
+	    <li>Minor bug fixes</li>
 	    </ul>
             ]]>
             </description>
-            <sparkle:shortVersionString>3.4.7</sparkle:shortVersionString>
+            <sparkle:shortVersionString>3.4.8</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.4.7.dmg" length="13152013" type="application/octet-stream" sparkle:edSignature="a1WIAqHA6Zv/FFu7rBBLbU9+C8Pag9oAMGr1Nvrnu2p4tdi4TWAIIJAVfTH4fHiL5grtEYNjsfHiZbzEG3cvDw=="/>
+            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.4.8.dmg" length="13160776" type="application/octet-stream" sparkle:edSignature="IuXxUOaCFnNte2M2qf4eYSwIf8z/Mf9bzViADnIvLM2asLdWxMuoPPmQZHF3P/qyUowPrxqsVai13YZcLnyTBA=="/>
         </item>
     </channel>
 </rss>
