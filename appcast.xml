@@ -3,19 +3,19 @@
     <channel>
         <title>Smeller</title>
         <item>
-            <title>3.5.1</title>
-            <pubDate>Wed, 30 Oct 2024 08:59:11 +0100</pubDate>
-            <sparkle:version>10</sparkle:version>
- <description><![CDATA[
+            <title>3.5.2</title>
+            <pubDate>Tue, 05 Nov 2024 10:40:08 +0100</pubDate>
+            <sparkle:version>11</sparkle:version>
+<description><![CDATA[
             <h2>New Features</h2>
 	    <ul>
-	    <li>Fixed iMac version</li>
+	    <li>Bug fixes</li>
 	    </ul>
             ]]>
             </description>
-            <sparkle:shortVersionString>3.5.1</sparkle:shortVersionString>
+            <sparkle:shortVersionString>3.5.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.5.1.dmg" length="12405963" type="application/octet-stream" sparkle:edSignature="P6vwlRExULzwKy/zuoyxQL1ubBMfzssHPgxtkjmf10BySR1tkc2EU/el+h49tPpk4FX44GwTJ5/tK7nc3kwnBw=="/>
+            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.5.2.dmg" length="12404708" type="application/octet-stream" sparkle:edSignature="0tjCHO+6NF0KbUILZb5ZESa8ZE3F9FY5n0S+XsW2VJlYCAY7hoTNRwrw3LOP+H44ckyqkwZj/xy4k3B08S0pAQ=="/>
         </item>
     </channel>
 </rss>
