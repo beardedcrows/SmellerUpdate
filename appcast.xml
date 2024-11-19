@@ -15,7 +15,7 @@
             </description>
             <sparkle:shortVersionString>3.5.4</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://beardedcrows.github.io/SmellerUpdate/Smeller%203.5.4.dmg" length="12496022" type="application/octet-stream" sparkle:edSignature="aB+3ca4XFP6SfVy8xQLz22vrVh9mI5RzEa5LC2nIkRZ2fnHzZf1181GNsZSTyT1F2cdBFah93R14FBQYFpM1DQ=="/>
+            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.5.4.dmg" length="12496022" type="application/octet-stream" sparkle:edSignature="aB+3ca4XFP6SfVy8xQLz22vrVh9mI5RzEa5LC2nIkRZ2fnHzZf1181GNsZSTyT1F2cdBFah93R14FBQYFpM1DQ=="/>
         </item>
     </channel>
 </rss>
