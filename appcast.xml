@@ -3,19 +3,20 @@
     <channel>
         <title>Smeller</title>
         <item>
-            <title>3.5.4</title>
-            <pubDate>Tue, 19 Nov 2024 09:17:07 +0100</pubDate>
-            <sparkle:version>13</sparkle:version>
+            <title>3.5.5</title>
+            <pubDate>Fri, 29 Nov 2024 10:30:14 +0100</pubDate>
+            <sparkle:version>14</sparkle:version>
 <description><![CDATA[
             <h2>New Features</h2>
 	    <ul>
-	    <li>Print orders directly from main menu</li>
+	    <li>Fixed diagnostic menu</li>
+	    <li>Improved App icon</li>
 	    </ul>
             ]]>
             </description>
-            <sparkle:shortVersionString>3.5.4</sparkle:shortVersionString>
+            <sparkle:shortVersionString>3.5.5</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.5.4.dmg" length="12496022" type="application/octet-stream" sparkle:edSignature="aB+3ca4XFP6SfVy8xQLz22vrVh9mI5RzEa5LC2nIkRZ2fnHzZf1181GNsZSTyT1F2cdBFah93R14FBQYFpM1DQ=="/>
+            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.5.5.dmg" length="12473615" type="application/octet-stream" sparkle:edSignature="y7uvpMdEzwYHgWiP5jdfjZ/7VLjzTeO8er6AGCD1uG3p3LnTl0xjAxCOU66ByKChsVLodj2+mUSyEELmXhZlDQ=="/>
         </item>
     </channel>
 </rss>
