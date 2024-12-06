@@ -3,20 +3,20 @@
     <channel>
         <title>Smeller</title>
         <item>
-            <title>3.5.5</title>
-            <pubDate>Fri, 29 Nov 2024 10:30:14 +0100</pubDate>
-            <sparkle:version>14</sparkle:version>
+            <title>3.5.6</title>
+            <pubDate>Fri, 06 Dec 2024 15:02:08 +0100</pubDate>
+            <sparkle:version>15</sparkle:version>
 <description><![CDATA[
             <h2>New Features</h2>
 	    <ul>
-	    <li>Fixed diagnostic menu</li>
-	    <li>Improved App icon</li>
+	    <li>New Noa request. Print orders from diagnostic menu</li>
+	    <li>If the spec is wrong compared to the order the text will be marked with red color</li>
 	    </ul>
             ]]>
             </description>
-            <sparkle:shortVersionString>3.5.5</sparkle:shortVersionString>
+            <sparkle:shortVersionString>3.5.6</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.5.5.dmg" length="12473615" type="application/octet-stream" sparkle:edSignature="y7uvpMdEzwYHgWiP5jdfjZ/7VLjzTeO8er6AGCD1uG3p3LnTl0xjAxCOU66ByKChsVLodj2+mUSyEELmXhZlDQ=="/>
+            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.5.6.dmg" length="12505494" type="application/octet-stream" sparkle:edSignature="K9Kjrijni4nqYHJFRT8QF65ablOlmuh27G3P8b0KN0XgV/haxnyiJgq33Sp6dzm4dLxIRF9HO/X2SHp1/qDSCA=="/>
         </item>
     </channel>
 </rss>
