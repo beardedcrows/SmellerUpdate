@@ -3,12 +3,20 @@
     <channel>
         <title>Smeller</title>
         <item>
-            <title>3.5.9</title>
-            <pubDate>Thu, 09 Jan 2025 15:50:33 +0100</pubDate>
-            <sparkle:version>19</sparkle:version>
-            <sparkle:shortVersionString>3.5.9</sparkle:shortVersionString>
+            <title>3.6</title>
+            <pubDate>Mon, 27 Jan 2025 12:41:01 +0100</pubDate>
+            <sparkle:version>20</sparkle:version>
+<description><![CDATA[
+            <h2>New Features</h2>
+	    <ul>
+	    <li>Now the app won't exit fullscreen when you test the keyboard</li>
+	    <li>Bug fixes</li>
+	    </ul>
+            ]]>
+            </description>
+            <sparkle:shortVersionString>3.6</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.5.9.dmg" length="12504892" type="application/octet-stream" sparkle:edSignature="tK3NJTH/x1mSVgN/UScwhYeTQ7sRch6X9+8Wc5xTiu7pyAZfCjAgjs1QGu80q/HEclap6HDyrHqEetJngKp2BA=="/>
+            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.6.dmg" length="12508420" type="application/octet-stream" sparkle:edSignature="vRRxHYNj0XYlLsYfsB1zkoLdMKxtdmyEFIcoHhwedecVoyr6utJ+VpkI5wt52IU33lwkfGjtb7x3T3t/I+8fAg=="/>
         </item>
     </channel>
 </rss>
