@@ -3,20 +3,20 @@
     <channel>
         <title>Smeller</title>
         <item>
-            <title>3.6</title>
-            <pubDate>Mon, 27 Jan 2025 12:41:01 +0100</pubDate>
-            <sparkle:version>20</sparkle:version>
+            <title>3.6.1</title>
+            <pubDate>Fri, 07 Feb 2025 14:31:58 +0100</pubDate>
+            <sparkle:version>21</sparkle:version>
 <description><![CDATA[
             <h2>New Features</h2>
 	    <ul>
-	    <li>Now the app won't exit fullscreen when you test the keyboard</li>
+	    <li>Erase Assistant is now opened automatically after app is closed</li>
 	    <li>Bug fixes</li>
 	    </ul>
             ]]>
             </description>
-            <sparkle:shortVersionString>3.6</sparkle:shortVersionString>
+            <sparkle:shortVersionString>3.6.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.6.dmg" length="12508420" type="application/octet-stream" sparkle:edSignature="vRRxHYNj0XYlLsYfsB1zkoLdMKxtdmyEFIcoHhwedecVoyr6utJ+VpkI5wt52IU33lwkfGjtb7x3T3t/I+8fAg=="/>
+            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.3.6.1.dmg" length="12510877" type="application/octet-stream" sparkle:edSignature="cQHD52ATaUaSwwpg7NSGQA+PCUV3vRDv2Q0XXHuGkncweU213S6jisXTHg5y8jpPLI4RfWq1ZTXkg4Dyjps5AQ=="/>
         </item>
     </channel>
 </rss>
