@@ -6,7 +6,8 @@
             <title>3.7.7</title>
             <pubDate>Fri, 08 Aug 2025 15:25:08 +0200</pubDate>
             <sparkle:version>40</sparkle:version>
- <h2>New Features</h2>
+<description><![CDATA[
+	    <h2>New Features</h2>
 	    <ul>
 	    <li>New Battery Tester is launched!</li>
 	    <li>New Stability Tester is launched!</li>
