@@ -3,12 +3,12 @@
     <channel>
         <title>Smeller</title>
         <item>
-            <title>4.1</title>
-            <pubDate>Tue, 11 Aug 2026 11:39:37 +0200</pubDate>
-            <sparkle:version>64</sparkle:version>
-            <sparkle:shortVersionString>4.1</sparkle:shortVersionString>
+            <title>4.1.1</title>
+            <pubDate>Fri, 14 Aug 2026 13:47:41 +0200</pubDate>
+            <sparkle:version>65</sparkle:version>
+            <sparkle:shortVersionString>4.1.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.4.1.dmg" length="15003363" type="application/octet-stream" sparkle:edSignature="D9WJqSGQAB8+6fXv60gBmnDA0POL2jQyo4cjA8tB6+4aiqOXcOOvr1WHf/aidye+gkhLvk8hoRZuRyUKmI54Bg=="/>
+            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.4.1.1.dmg" length="15015009" type="application/octet-stream" sparkle:edSignature="qgvmHNIB/Z9LrosrtWKk3qTZwzN5BStZ5eQVBXDelIGbYknCCyYAl2rSTPfcJn6gbXJuZvXUr0M+J06IRpByBQ=="/>
         </item>
     </channel>
 </rss>
