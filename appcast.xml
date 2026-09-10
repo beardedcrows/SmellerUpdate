@@ -1,14 +1,14 @@
 <?xml version="1.0" standalone="yes"?>
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
     <channel>
-        <title>Smeller</title>
+        <title>mCheck</title>
         <item>
-            <title>4.1.2</title>
-            <pubDate>Mon, 31 Aug 2026 11:13:10 +0200</pubDate>
-            <sparkle:version>66</sparkle:version>
-            <sparkle:shortVersionString>4.1.2</sparkle:shortVersionString>
+            <title>4.1.3</title>
+            <pubDate>Thu, 10 Sep 2026 15:12:48 +0200</pubDate>
+            <sparkle:version>67</sparkle:version>
+            <sparkle:shortVersionString>4.1.3</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/Smeller.4.1.2.dmg" length="15015700" type="application/octet-stream" sparkle:edSignature="T7qDz6LP2HHuG8lSeH+uEfO4WMyPRh57he2raAq7NQ/Kac5iL1iA38eHycXfz8r/pgjMVWHJm4TLtETgfwUXBw=="/>
+            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/mCheck.4.1.3.dmg" length="15089514" type="application/octet-stream" sparkle:edSignature="hNEBQ/Txo1+LWkXapFYJvBObY834im1PQB7+M+LsYI17+7UbFurt6Me454cNRYfHaKz4XI0AJm2BjKwI0QB2BA=="/>
         </item>
     </channel>
 </rss>
