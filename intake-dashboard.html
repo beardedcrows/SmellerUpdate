@@ -119,10 +119,17 @@
     flex-shrink: 0;
   }
   .rows { display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
-  .row { display: grid; grid-template-columns: 34px 160px 1fr 60px; align-items: center; gap: 16px; }
+  .row { display: grid; grid-template-columns: 34px 260px 1fr 60px; align-items: center; gap: 16px; }
   .rank { font-size: 20px; text-align: center; }
   .rank.num { font-family: 'IBM Plex Mono', monospace; color: var(--text-faint); font-size: 16px; }
-  .name { font-size: 17px; font-weight: 500; color: var(--text); }
+  .name {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .bar-track { height: 22px; background: rgba(255,255,255,0.04); border-radius: 3px; overflow: hidden; }
   .bar-fill {
     height: 100%;
@@ -316,7 +323,7 @@ async function refreshLeaderboard() {
   rowsEl.innerHTML = top.map((entry, i) => `
     <div class="row">
       <div class="rank ${i < 3 ? '' : 'num'}">${medals[i] || (i + 1)}</div>
-      <div class="name">${escapeHtml(entry.name)}</div>
+      <div class="name" title="${escapeHtml(entry.name)}">${escapeHtml(entry.name)}</div>
       <div class="bar-track"><div class="bar-fill" style="width:${Math.max(4, (entry.count / maxCount) * 100)}%"></div></div>
       <div class="count">${entry.count}</div>
     </div>
