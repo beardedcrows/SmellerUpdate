@@ -157,7 +157,7 @@
 
 <div class="frame">
   <div class="header">
-    <div class="brand"><b>mResell</b> &nbsp;·&nbsp; Service Checks</div>
+    <div class="brand"><b>mResell</b> &nbsp;·&nbsp; Intake</div>
     <div class="status-cluster">
       <div class="live-dot" id="liveDot"><span class="pip"></span><span id="liveText">connecting</span></div>
       <div class="clock mono" id="clock">--:--:--</div>
@@ -275,8 +275,8 @@ function startOfMonth() {
 async function countSince(dateObj, testerName) {
   let q = db.collection('Reports').where('date', '>=', dateObj);
   if (testerName) q = q.where('testerName', '==', testerName);
-  const snap = await q.count().get();
-  return snap.data().count;
+  const snap = await q.get();
+  return snap.size;
 }
 
 async function refreshTotals() {
