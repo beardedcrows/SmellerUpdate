@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>mResell — Intake Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.13.2/firebase-app-compat.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.13.2/firebase-auth-compat.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.13.2/firebase-firestore-compat.min.js"></script>
+
+<style>
+  :root {
+    --bg: #14181a;
+    --panel: #1b2123;
+    --grid-line: rgba(255,255,255,0.055);
+    --amber: #e8a33d;
+    --amber-dim: #8a6a35;
+    --teal: #5fbfb3;
+    --text: #e9edec;
+    --text-dim: #8a9490;
+    --text-faint: #5b6360;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: border-box;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+    overflow: hidden;
+  }
+  body {
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+
+  .frame {
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 44px;
+    padding-top: calc(28px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* ── Header ─────────────────────────────────────────── */
+  .header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--grid-line);
+    flex-shrink: 0;
+  }
+  .brand { font-size: 15px; letter-spacing: 0.02em; color: var(--text-dim); }
+  .brand b { color: var(--text); font-weight: 600; }
+  .status-cluster { display: flex; align-items: baseline; gap: 18px; }
+  .clock { font-size: 18px; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+  .live-dot { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-faint); }
+  .live-dot .pip {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 8px var(--teal);
+  }
+  .live-dot.err .pip { background: #d16a5a; box-shadow: 0 0 8px #d16a5a; }
+
+  /* ── Hero readouts ──────────────────────────────────── */
+  .readouts {
+    display: flex;
+    align-items: flex-end;
+    gap: 64px;
+    padding: 36px 0 28px;
+    flex-shrink: 0;
+  }
+  .readout-label {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .readout.primary .readout-value {
+    font-size: 148px;
+    line-height: 0.9;
+    font-weight: 700;
+    color: var(--amber);
+    text-shadow: 0 0 32px rgba(232,163,61,0.25);
+  }
+  .readout.secondary .readout-value {
+    font-size: 64px;
+    line-height: 0.9;
+    font-weight: 600;
+    color: var(--teal);
+  }
+  .readout.secondary { padding-bottom: 8px; }
+
+  /* ── Leaderboard ────────────────────────────────────── */
+  .board {
+    flex: 1;
+    min-height: 0;
+    border-top: 1px solid var(--grid-line);
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .board-title {
+    font-size: 15px;
+    color: var(--text-dim);
+    margin-bottom: 18px;
+    flex-shrink: 0;
+  }
+  .rows { display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+  .row { display: grid; grid-template-columns: 34px 160px 1fr 60px; align-items: center; gap: 16px; }
+  .rank { font-size: 20px; text-align: center; }
+  .rank.num { font-family: 'IBM Plex Mono', monospace; color: var(--text-faint); font-size: 16px; }
+  .name { font-size: 17px; font-weight: 500; color: var(--text); }
+  .bar-track { height: 22px; background: rgba(255,255,255,0.04); border-radius: 3px; overflow: hidden; }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--amber-dim), var(--amber));
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+  }
+  .row:nth-child(n+2) .bar-fill { background: linear-gradient(90deg, #2f5a54, var(--teal)); }
+  .count { font-family: 'IBM Plex Mono', monospace; font-size: 18px; text-align: right; color: var(--text); }
+
+  .empty-board, .setup, .fatal {
+    color: var(--text-dim);
+    font-size: 15px;
+    padding-top: 8px;
+  }
+  .setup, .fatal {
+    max-width: 640px;
+    line-height: 1.6;
+  }
+  .setup code, .fatal code {
+    background: rgba(255,255,255,0.06);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.92em;
+    color: var(--amber);
+  }
+  .fatal { color: #d18b7d; }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="header">
+    <div class="brand"><b>mResell</b> &nbsp;·&nbsp; Service Checks</div>
+    <div class="status-cluster">
+      <div class="live-dot" id="liveDot"><span class="pip"></span><span id="liveText">connecting</span></div>
+      <div class="clock mono" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div id="content">
+    <div class="setup">
+      Loading…
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Fill in your Firebase config here (from GoogleService-Info.plist) ───
+const firebaseConfig = {
+  apiKey: "AIzaSyCX4sXnjN0KbiIKbZ0L2y2xbbORSoW-z5Y",
+  authDomain: "smeller-eb18b.firebaseapp.com",
+  projectId: "smeller-eb18b",
+  storageBucket: "smeller-eb18b.firebasestorage.app",
+  messagingSenderId: "496825022394",
+  appId: "1:496825022394:web:a413ed62435e9efbf78f83"
+};
+
+const REFRESH_INTERVAL_MS = 60000; // how often to re-query Firestore
+const LEADERBOARD_SIZE = 5;
+
+let db = null;
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function setLive(ok, label) {
+  const dot = document.getElementById('liveDot');
+  const text = document.getElementById('liveText');
+  dot.classList.toggle('err', !ok);
+  text.textContent = label;
+}
+
+function renderSetupNeeded() {
+  document.getElementById('content').innerHTML = `
+    <div class="setup">
+      This dashboard needs your Firebase config filled in before it can connect.<br><br>
+      Open this page's HTML and replace the placeholder values in <code>firebaseConfig</code>
+      near the bottom of the file with the values from your app's
+      <code>GoogleService-Info.plist</code> (apiKey, projectId, appId, etc).
+    </div>`;
+  setLive(false, 'not configured');
+}
+
+function renderFatalError(message) {
+  document.getElementById('content').innerHTML = `
+    <div class="fatal">
+      Couldn't load live data: ${escapeHtml(message)}<br><br>
+      Check that Anonymous sign-in is enabled for this Firebase project, and that
+      Firestore security rules allow read access to <code>Reports</code> and <code>Testers</code>
+      for signed-in (including anonymous) users.
+    </div>`;
+  setLive(false, 'error');
+}
+
+function renderDashboard() {
+  document.getElementById('content').innerHTML = `
+    <div class="readouts">
+      <div class="readout primary">
+        <div class="readout-label">Today</div>
+        <div class="readout-value mono" id="todayVal">0</div>
+      </div>
+      <div class="readout secondary">
+        <div class="readout-label">This week</div>
+        <div class="readout-value mono" id="weekVal">0</div>
+      </div>
+      <div class="readout secondary">
+        <div class="readout-label">This month</div>
+        <div class="readout-value mono" id="monthVal">0</div>
+      </div>
+    </div>
+    <div class="board">
+      <div class="board-title">Top performers — this month</div>
+      <div class="rows" id="rows"><div class="empty-board">Loading…</div></div>
+    </div>`;
+}
+
+// Animates a number element from its current displayed value to a new one.
+function animateValue(el, to) {
+  const from = parseInt(el.textContent.replace(/[^\d]/g, ''), 10) || 0;
+  if (from === to) { el.textContent = to; return; }
+  const duration = 500;
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(from + (to - from) * eased);
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function startOfDay() {
+  const d = new Date(); d.setHours(0, 0, 0, 0); return d;
+}
+function startOfWeek() {
+  const d = startOfDay();
+  const day = d.getDay();
+  const diffToMonday = (day === 0 ? 6 : day - 1);
+  d.setDate(d.getDate() - diffToMonday);
+  return d;
+}
+function startOfMonth() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+}
+
+async function countSince(dateObj, testerName) {
+  let q = db.collection('Reports').where('date', '>=', dateObj);
+  if (testerName) q = q.where('testerName', '==', testerName);
+  const snap = await q.count().get();
+  return snap.data().count;
+}
+
+async function refreshTotals() {
+  const [today, week, month] = await Promise.all([
+    countSince(startOfDay()),
+    countSince(startOfWeek()),
+    countSince(startOfMonth())
+  ]);
+  animateValue(document.getElementById('todayVal'), today);
+  animateValue(document.getElementById('weekVal'), week);
+  animateValue(document.getElementById('monthVal'), month);
+}
+
+async function refreshLeaderboard() {
+  const testersSnap = await db.collection('Testers').get();
+  const names = testersSnap.docs
+    .map(d => d.data().name)
+    .filter(n => typeof n === 'string' && n.trim().length > 0);
+
+  const monthStart = startOfMonth();
+  const results = await Promise.all(names.map(async name => {
+    const count = await countSince(monthStart, name);
+    return { name, count };
+  }));
+
+  const top = results.filter(r => r.count > 0).sort((a, b) => b.count - a.count).slice(0, LEADERBOARD_SIZE);
+  const rowsEl = document.getElementById('rows');
+  if (!rowsEl) return;
+
+  if (top.length === 0) {
+    rowsEl.innerHTML = '<div class="empty-board">No devices processed yet this month.</div>';
+    return;
+  }
+
+  const maxCount = top[0].count;
+  const medals = ['🥇', '🥈', '🥉'];
+  rowsEl.innerHTML = top.map((entry, i) => `
+    <div class="row">
+      <div class="rank ${i < 3 ? '' : 'num'}">${medals[i] || (i + 1)}</div>
+      <div class="name">${escapeHtml(entry.name)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.max(4, (entry.count / maxCount) * 100)}%"></div></div>
+      <div class="count">${entry.count}</div>
+    </div>
+  `).join('');
+}
+
+async function refreshAll() {
+  try {
+    await Promise.all([refreshTotals(), refreshLeaderboard()]);
+    setLive(true, 'live');
+  } catch (e) {
+    console.error(e);
+    setLive(false, 'refresh failed');
+  }
+}
+
+async function main() {
+  if (firebaseConfig.apiKey === 'YOUR_API_KEY') {
+    renderSetupNeeded();
+    return;
+  }
+  try {
+    firebase.initializeApp(firebaseConfig);
+    await firebase.auth().signInAnonymously();
+    db = firebase.firestore();
+  } catch (e) {
+    renderFatalError(e.message || String(e));
+    return;
+  }
+
+  renderDashboard();
+  await refreshAll();
+  setInterval(refreshAll, REFRESH_INTERVAL_MS);
+}
+
+setInterval(() => {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB');
+}, 1000);
+
+main();
+</script>
+</body>
+</html>
