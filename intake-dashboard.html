@@ -80,7 +80,7 @@
     display: flex;
     align-items: flex-end;
     gap: 64px;
-    padding: 36px 0 28px;
+    padding: 28px 0 22px;
     flex-shrink: 0;
   }
   .readout-label {
@@ -89,48 +89,59 @@
     margin-bottom: 10px;
   }
   .readout.primary .readout-value {
-    font-size: 148px;
+    font-size: 128px;
     line-height: 0.9;
     font-weight: 700;
     color: var(--amber);
     text-shadow: 0 0 32px rgba(232,163,61,0.25);
   }
   .readout.secondary .readout-value {
-    font-size: 64px;
+    font-size: 56px;
     line-height: 0.9;
     font-weight: 600;
     color: var(--teal);
   }
   .readout.secondary { padding-bottom: 8px; }
 
-  /* ── Leaderboard ────────────────────────────────────── */
-  .board {
+  /* ── Leaderboards ───────────────────────────────────── */
+  .boards {
     flex: 1;
     min-height: 0;
     border-top: 1px solid var(--grid-line);
-    padding-top: 24px;
+    padding-top: 20px;
     display: flex;
     flex-direction: column;
+    gap: 22px;
+  }
+  .board {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .board + .board {
+    border-top: 1px solid var(--grid-line);
+    padding-top: 20px;
   }
   .board-title {
     font-size: 15px;
     color: var(--text-dim);
-    margin-bottom: 18px;
+    margin-bottom: 14px;
     flex-shrink: 0;
   }
-  .rows { display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+  .rows { display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
   .row { display: grid; grid-template-columns: 34px 300px 1fr 60px; align-items: center; gap: 16px; }
   .rank { font-size: 20px; text-align: center; }
   .rank.num { font-family: 'IBM Plex Mono', monospace; color: var(--text-faint); font-size: 16px; }
   .name {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 500;
     color: var(--text);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .bar-track { height: 22px; background: rgba(255,255,255,0.04); border-radius: 3px; overflow: hidden; }
+  .bar-track { height: 18px; background: rgba(255,255,255,0.04); border-radius: 3px; overflow: hidden; }
   .bar-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--amber-dim), var(--amber));
@@ -138,7 +149,7 @@
     transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
   }
   .row:nth-child(n+2) .bar-fill { background: linear-gradient(90deg, #2f5a54, var(--teal)); }
-  .count { font-family: 'IBM Plex Mono', monospace; font-size: 18px; text-align: right; color: var(--text); }
+  .count { font-family: 'IBM Plex Mono', monospace; font-size: 17px; text-align: right; color: var(--text); }
 
   .empty-board, .setup, .fatal {
     color: var(--text-dim);
@@ -191,6 +202,7 @@ const firebaseConfig = {
 
 const REFRESH_INTERVAL_MS = 60000; // how often to re-query Firestore
 const LEADERBOARD_SIZE = 5;
+const MODEL_LEADERBOARD_SIZE = 5;
 
 let db = null;
 
@@ -243,9 +255,15 @@ function renderDashboard() {
         <div class="readout-value mono" id="monthVal">0</div>
       </div>
     </div>
-    <div class="board">
-      <div class="board-title">Most checks this month</div>
-      <div class="rows" id="rows"><div class="empty-board">Loading…</div></div>
+    <div class="boards">
+      <div class="board">
+        <div class="board-title">Most checks this month</div>
+        <div class="rows" id="rows"><div class="empty-board">Loading…</div></div>
+      </div>
+      <div class="board">
+        <div class="board-title">Most processed models this month</div>
+        <div class="rows" id="modelRows"><div class="empty-board">Loading…</div></div>
+      </div>
     </div>`;
 }
 
@@ -286,15 +304,21 @@ async function countSince(dateObj, testerName) {
   return snap.size;
 }
 
-async function refreshTotals() {
-  const [today, week, month] = await Promise.all([
+// Single query for the whole month's Reports — reused for both the "This
+// month" total and the model tally below, so adding the model leaderboard
+// doesn't cost any extra Firestore reads beyond what the total already needed.
+async function fetchMonthSnapshot() {
+  return db.collection('Reports').where('date', '>=', startOfMonth()).get();
+}
+
+async function refreshTotals(monthSnapshot) {
+  const [today, week] = await Promise.all([
     countSince(startOfDay()),
-    countSince(startOfWeek()),
-    countSince(startOfMonth())
+    countSince(startOfWeek())
   ]);
   animateValue(document.getElementById('todayVal'), today);
   animateValue(document.getElementById('weekVal'), week);
-  animateValue(document.getElementById('monthVal'), month);
+  animateValue(document.getElementById('monthVal'), monthSnapshot.size);
 }
 
 async function refreshLeaderboard() {
@@ -310,29 +334,63 @@ async function refreshLeaderboard() {
   }));
 
   const top = results.filter(r => r.count > 0).sort((a, b) => b.count - a.count).slice(0, LEADERBOARD_SIZE);
-  const rowsEl = document.getElementById('rows');
+  renderRankedRows('rows', top.map(r => ({ label: r.name, count: r.count })), { medals: true });
+}
+
+// Tallies the "model" field across an already-fetched month snapshot —
+// no separate query needed.
+function renderModelLeaderboard(monthSnapshot) {
+  const counts = {};
+  monthSnapshot.docs.forEach(doc => {
+    const model = doc.data().model;
+    if (typeof model === 'string' && model.trim().length > 0) {
+      counts[model] = (counts[model] || 0) + 1;
+    }
+  });
+
+  const top = Object.entries(counts)
+    .map(([model, count]) => ({ label: model, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, MODEL_LEADERBOARD_SIZE);
+
+  renderRankedRows('modelRows', top, { medals: false });
+}
+
+// Shared renderer for both ranked lists — top performers use medal emoji for
+// the top 3, models just use plain rank numbers throughout.
+function renderRankedRows(containerId, entries, { medals }) {
+  const rowsEl = document.getElementById(containerId);
   if (!rowsEl) return;
 
-  if (top.length === 0) {
-    rowsEl.innerHTML = '<div class="empty-board">No devices processed yet this month.</div>';
+  if (entries.length === 0) {
+    rowsEl.innerHTML = '<div class="empty-board">No data yet this month.</div>';
     return;
   }
 
-  const maxCount = top[0].count;
-  const medals = ['🥇', '🥈', '🥉'];
-  rowsEl.innerHTML = top.map((entry, i) => `
-    <div class="row">
-      <div class="rank ${i < 3 ? '' : 'num'}">${medals[i] || (i + 1)}</div>
-      <div class="name" title="${escapeHtml(entry.name)}">${escapeHtml(entry.name)}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${Math.max(4, (entry.count / maxCount) * 100)}%"></div></div>
-      <div class="count">${entry.count}</div>
-    </div>
-  `).join('');
+  const maxCount = entries[0].count;
+  const medalIcons = ['🥇', '🥈', '🥉'];
+  rowsEl.innerHTML = entries.map((entry, i) => {
+    const rankDisplay = medals && medalIcons[i] ? medalIcons[i] : (i + 1);
+    const rankClass = medals && i < 3 ? '' : 'num';
+    return `
+      <div class="row">
+        <div class="rank ${rankClass}">${rankDisplay}</div>
+        <div class="name" title="${escapeHtml(entry.label)}">${escapeHtml(entry.label)}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.max(4, (entry.count / maxCount) * 100)}%"></div></div>
+        <div class="count">${entry.count}</div>
+      </div>
+    `;
+  }).join('');
 }
 
 async function refreshAll() {
   try {
-    await Promise.all([refreshTotals(), refreshLeaderboard()]);
+    const monthSnapshot = await fetchMonthSnapshot();
+    await Promise.all([
+      refreshTotals(monthSnapshot),
+      refreshLeaderboard()
+    ]);
+    renderModelLeaderboard(monthSnapshot);
     setLive(true, 'live');
   } catch (e) {
     console.error(e);
