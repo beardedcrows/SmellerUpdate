@@ -8,10 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.13.2/firebase-app-compat.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.13.2/firebase-auth-compat.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.13.2/firebase-firestore-compat.min.js"></script>
-
 <style>
   :root {
     --bg: #14181a;
@@ -189,7 +185,22 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+// ─── Modular Firebase Web SDK, loaded as real ES modules from Google's CDN ───
+// Switched away from the compat/namespaced SDK (the old <script> tag style)
+// because the compat build never exposes count() as public API — confirmed
+// from Firebase's own firebase-js-sdk repo: they deliberately kept count()
+// out of firestore-compat's public surface. Only the modular SDK's
+// getCountFromServer() actually does real server-side aggregation counts
+// (1 read no matter how many documents match) — which is the whole point,
+// since without it every refresh was downloading full documents instead of
+// just counts, burning through the daily read quota.
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import {
+  getFirestore, collection, query, where, getDocs, getCountFromServer
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
 // ─── Fill in your Firebase config here (from GoogleService-Info.plist) ───
 const firebaseConfig = {
   apiKey: "AIzaSyCX4sXnjN0KbiIKbZ0L2y2xbbORSoW-z5Y",
@@ -200,7 +211,7 @@ const firebaseConfig = {
   appId: "1:496825022394:web:a413ed62435e9efbf78f83"
 };
 
-const REFRESH_INTERVAL_MS = 60000; // how often to re-query Firestore
+const REFRESH_INTERVAL_MS = 15 * 60 * 1000; // how often to re-query Firestore
 const LEADERBOARD_SIZE = 5;
 const MODEL_LEADERBOARD_SIZE = 5;
 
@@ -297,32 +308,41 @@ function startOfMonth() {
   return new Date(now.getFullYear(), now.getMonth(), 1);
 }
 
+// Real server-side aggregation count — billed as a single read no matter how
+// many documents match. This is the whole fix: previously this called
+// query.count(), which silently doesn't exist in the compat SDK, and the
+// fallback downloaded every matching document instead.
 async function countSince(dateObj, testerName) {
-  let q = db.collection('Reports').where('date', '>=', dateObj);
-  if (testerName) q = q.where('testerName', '==', testerName);
-  const snap = await q.get();
-  return snap.size;
+  const reportsRef = collection(db, 'Reports');
+  const clauses = [where('date', '>=', dateObj)];
+  if (testerName) clauses.push(where('testerName', '==', testerName));
+  const q = query(reportsRef, ...clauses);
+  const snap = await getCountFromServer(q);
+  return snap.data().count;
 }
 
-// Single query for the whole month's Reports — reused for both the "This
-// month" total and the model tally below, so adding the model leaderboard
-// doesn't cost any extra Firestore reads beyond what the total already needed.
-async function fetchMonthSnapshot() {
-  return db.collection('Reports').where('date', '>=', startOfMonth()).get();
+// This one still needs real documents (to tally the "model" field per
+// document, which aggregation queries can't do), so it stays a normal
+// getDocs() call. It only runs once per refresh — not once per tester —
+// so it doesn't scale with roster size the way the old per-tester downloads did.
+async function fetchMonthDocs() {
+  const reportsRef = collection(db, 'Reports');
+  const q = query(reportsRef, where('date', '>=', startOfMonth()));
+  return getDocs(q);
 }
 
-async function refreshTotals(monthSnapshot) {
+async function refreshTotals(monthDocsCount) {
   const [today, week] = await Promise.all([
     countSince(startOfDay()),
     countSince(startOfWeek())
   ]);
   animateValue(document.getElementById('todayVal'), today);
   animateValue(document.getElementById('weekVal'), week);
-  animateValue(document.getElementById('monthVal'), monthSnapshot.size);
+  animateValue(document.getElementById('monthVal'), monthDocsCount);
 }
 
 async function refreshLeaderboard() {
-  const testersSnap = await db.collection('Testers').get();
+  const testersSnap = await getDocs(collection(db, 'Testers'));
   const names = testersSnap.docs
     .map(d => d.data().name)
     .filter(n => typeof n === 'string' && n.trim().length > 0);
@@ -337,7 +357,7 @@ async function refreshLeaderboard() {
   renderRankedRows('rows', top.map(r => ({ label: r.name, count: r.count })), { medals: true });
 }
 
-// Tallies the "model" field across an already-fetched month snapshot —
+// Tallies the "model" field across the already-fetched month documents —
 // no separate query needed.
 function renderModelLeaderboard(monthSnapshot) {
   const counts = {};
@@ -385,9 +405,9 @@ function renderRankedRows(containerId, entries, { medals }) {
 
 async function refreshAll() {
   try {
-    const monthSnapshot = await fetchMonthSnapshot();
+    const monthSnapshot = await fetchMonthDocs();
     await Promise.all([
-      refreshTotals(monthSnapshot),
+      refreshTotals(monthSnapshot.size),
       refreshLeaderboard()
     ]);
     renderModelLeaderboard(monthSnapshot);
@@ -404,9 +424,10 @@ async function main() {
     return;
   }
   try {
-    firebase.initializeApp(firebaseConfig);
-    await firebase.auth().signInAnonymously();
-    db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    await signInAnonymously(auth);
+    db = getFirestore(app);
   } catch (e) {
     renderFatalError(e.message || String(e));
     return;
