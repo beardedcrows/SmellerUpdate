@@ -3,12 +3,12 @@
     <channel>
         <title>mCheck</title>
         <item>
-            <title>4.1.10</title>
-            <pubDate>Fri, 23 Oct 2026 10:57:43 +0200</pubDate>
-            <sparkle:version>74</sparkle:version>
-            <sparkle:shortVersionString>4.1.10</sparkle:shortVersionString>
+            <title>4.1.11</title>
+            <pubDate>Thu, 29 Oct 2026 15:53:03 +0100</pubDate>
+            <sparkle:version>75</sparkle:version>
+            <sparkle:shortVersionString>4.1.11</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/mCheck.4.1.10.dmg" length="13475432" type="application/octet-stream" sparkle:edSignature="NTP9NIRQ5XT+Lyr5rPt55WCX8adndOo6Ahm/KL8xVqhl9qy3/byzu2XzudwcKJePm7IYGMcFceGuybh34SP8AA=="/>
+            <enclosure url="https://github.com/beardedcrows/SmellerUpdate/releases/download/update/mCheck.4.1.11.dmg" length="13474887" type="application/octet-stream" sparkle:edSignature="2uKY4V2URWUZ5zkOIAEzeGymk6VXFrilmnARHoiF0OJs80Resl1u+GMck/WxWlZn2jQob78dtjBOAulONy4lCg=="/>
         </item>
     </channel>
 </rss>
